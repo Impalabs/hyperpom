@@ -1,0 +1,30 @@
+[package]
+name = "hyperpom"
+version = "0.1.0"
+authors = ["lyte <hyperpom@impalabs.fr>"]
+edition = "2021"
+description = "AArch64 fuzzing library based on the Apple Silicon hypervisor"
+documentation = "https://docs.rs/hyperpom"
+readme = "README.md"
+repository = "https://github.com/impalabs/hyperpom"
+license = "GPL-3.0-or-later"
+keywords = ["fuzzing", "hypervisor", "apple", "security", "aarch64"]
+categories = ["virtualization", "hardware-support", "testing"]
+
+[dependencies]
+applevisor = "0.1.1"
+bitfield = "0.13.2"
+rhexdump="0.1.1"
+capstone = "0.11.0"
+regex = "1"
+time = { version = "0.3.9", features = ["local-offset", "formatting"] }
+
+[dependencies.keystone-engine]
+git = "https://github.com/impalabs/keystone-bindings"
+branch = "master"
+version = "0.1.0"
+default-features = false
+features = ["build-from-src"]
+
+[package.metadata.docs.rs]
+targets = ["x86_64-apple-darwin", "aarch64-apple-darwin"]

@@ -1,0 +1,10 @@
+[package]
+name = "upng_fuzzer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "3.2.8", features = ["derive"] }
+eyre = "0.6"
+goblin = "0.5.2"
+hyperpom = { path = "../../" }
