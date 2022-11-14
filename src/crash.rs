@@ -43,8 +43,7 @@ pub enum ExitKind {
 ///
 /// An additional file that only contains the testcase is also created.
 ///
-/// Crashes are stored using [`CrashHandler::store_crash`] and timeouts using
-/// [`CrashHandler::store_timeout`].
+/// Crashes and timeouts are stored using [`CrashHandler::store_crash`].
 pub struct CrashHandler {
     /// The path to the crash directory.
     path: PathBuf,
