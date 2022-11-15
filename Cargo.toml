@@ -1,6 +1,6 @@
 [package]
 name = "hyperpom"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["lyte <hyperpom@impalabs.fr>"]
 edition = "2021"
 description = "AArch64 fuzzing library based on the Apple Silicon hypervisor"
@@ -19,6 +19,3 @@ capstone = "0.11.0"
 keystone-engine = "0.1.0"
 regex = "1"
 time = { version = "0.3.9", features = ["local-offset", "formatting"] }
-
-[package.metadata.docs.rs]
-targets = ["x86_64-apple-darwin", "aarch64-apple-darwin"]
