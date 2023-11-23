@@ -7,7 +7,7 @@ This example showcases how an `Executor` object can be used to execute arbitrary
 To run the program you can use the `Makefile` provided and simply do:
 
 ```
-CERT_KEYCHAIN=${CERT_NAME} make run
+make run
 ```
 
 If everything went as expected you should see the following input.

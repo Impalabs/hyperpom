@@ -810,7 +810,7 @@ impl Default for Symbols {
 /// If everything went as expected, the program should crash in a minute or two:
 ///
 /// ```text
-/// lyte@mini ~/simple_fuzzer > CERT_KEYCHAIN=Impalabs make run
+/// lyte@mini ~/simple_fuzzer > make run
 /// # [...]
 /// Loading corpus...
 /// Corpus loaded!
