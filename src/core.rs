@@ -384,7 +384,7 @@ impl<
             }
             // Iterates over thread handles to see if they timed out or if we need to join
             // terminated threads.
-            worker_handles.drain_filter(|instance, handle| {
+            let _ = worker_handles.extract_if(|instance, handle| {
                 // If there is still an handle associated to this thread...
                 if let Some(join_handle) = handle.join_handle.as_mut() {
                     // ... and the thread has finished running...
