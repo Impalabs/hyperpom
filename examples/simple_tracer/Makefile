@@ -1,5 +1,5 @@
 CODESIGN := codesign
-CARGO := cargo
+CARGO := cargo +nightly
 
 EXECUTOR := simple_tracer
 EXECUTOR_RELEASE := target/release/$(EXECUTOR)

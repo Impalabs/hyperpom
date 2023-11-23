@@ -1,5 +1,5 @@
 CODESIGN := codesign
-CARGO := cargo
+CARGO := cargo +nightly
 
 FUZZER := upng_fuzzer
 FUZZER_RELEASE := target/release/$(FUZZER)

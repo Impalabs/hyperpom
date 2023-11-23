@@ -75,8 +75,13 @@ pub struct FuzzSubCommand {
     nb_iterations: Option<u64>,
 
     /// Physical address space size available to the fuzzer.
-    #[clap(short = 's', long = "size", value_name = "SIZE", required = true,
-        parse(from_str = from_hex))]
+    #[clap(
+        short = 's',
+        long = "size",
+        value_name = "SIZE",
+        required = true,
+        value_parser=clap_num::maybe_hex::<usize>,
+    )]
     as_size: usize,
 }
 
@@ -103,8 +108,13 @@ pub struct TraceSubCommand {
     trace: PathBuf,
 
     /// Physical address space size available to the fuzzer.
-    #[clap(short = 's', long = "size", value_name = "SIZE", required = true,
-        parse(from_str = from_hex))]
+    #[clap(
+        short = 's',
+        long = "size",
+        value_name = "SIZE",
+        required = true,
+        value_parser=clap_num::maybe_hex::<usize>,
+    )]
     as_size: usize,
 }
 

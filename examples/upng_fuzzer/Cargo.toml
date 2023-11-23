@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "3.2.8", features = ["derive"] }
+clap = { version = "4.4.8", features = ["derive"] }
+clap-num = "1.0.2"
 eyre = "0.6"
-goblin = "0.5.2"
+goblin = "0.7.1"
 hyperpom = { path = "../../" }
