@@ -65,30 +65,14 @@
 //!
 //! ### Self-Signed Binaries and Hypervisor Entitlement
 //!
-//! To be able to reach the Hypervisor Framework, a binary executable has to have been granted the
-//! [hypervisor entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_hypervisor).
+//! To be able to reach the Hypervisor Framework, a binary executable has to have been granted the [hypervisor entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_hypervisor).
 //!
-//! #### Certificate Chain
-//!
-//! To add this entitlement to your project, you'll first need a certificate chain to sign your
-//! binaries, which can be created by following the instructions below.
-//!
-//! - Open the *Keychain Access* application.
-//! - Go to **Keychain Access** > **Certificate Assistant** > **Create a Certificate**.
-//! - Fill out the **Name** field, this value will be used later on to identify the certificate we
-//!   want to sign with and will be referred to as `${CERT_NAME}`.
-//! - Set **Identity Type** to `Self-Signed Root`.
-//! - Set **Certificate Type** to `Code Signing`.
-//! - Click on **Create**.
-//!
-//! You can now sign binaries and add entitlements using the following command:
+//! You can add this entitlement to a binary located at `/path/to/binary` by using the `entitlements.xml` file found at the root of the Hyperpom repository and the following command:
 //!
 //! ```
-//! codesign --entitlements entitlements.xml -s ${CERT_NAME} /path/to/binary
+//! codesign --sign - --entitlements entitlements.xml --deep --force /path/to/binary
 //! ```
 //!
-//! **Note:** The `entitlements.xml` file is available at the root of the
-//! [Hyperpom repository](https://github.com/impalabs/hyperpom/).
 //!
 //! ### Compilation Workflow
 //!
@@ -129,7 +113,7 @@
 //! Sign the binary and grant the hypervisor entitlement.
 //!
 //! ```
-//! codesign --entitlements entitlements.xml -s ${CERT_NAME} target/release/${PROJECT_NAME}
+//! codesign --sign - --entitlements entitlements.xml --deep --force target/release/${PROJECT_NAME}
 //! ```
 //!
 //! Run the binary.
@@ -155,9 +139,7 @@
 //! You can also have a look at the
 //! [tests](https://github.com/impalabs/hyperpom/tree/master/tests/tests.rs).
 
-
 #![feature(exclusive_range_pattern)]
-#![feature(hash_extract_if)]
 #![feature(iterator_try_collect)]
 #![feature(map_try_insert)]
 #![feature(portable_simd)]

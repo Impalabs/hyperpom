@@ -30,11 +30,11 @@ use crate::utils::*;
 
 thread_local!(
     /// A per-thread global keystone instance used to assemble ARM instructions.
-    pub static KSE: keystone_engine::Keystone =
-        keystone_engine::Keystone::new(
-            keystone_engine::Arch::ARM64,
-            keystone_engine::Mode::LITTLE_ENDIAN)
-                .expect("Could not initialize Keystone engine");
+    pub static KSE: keystone_engine::Keystone = keystone_engine::Keystone::new(
+        keystone_engine::Arch::ARM64,
+        keystone_engine::Mode::LITTLE_ENDIAN,
+    )
+    .expect("Could not initialize Keystone engine");
     /// A per-thread global capstone instance used to disassemble ARM instructions.
     pub static CSE: capstone::Capstone = capstone::Capstone::new_raw(
         capstone::Arch::ARM64,
@@ -237,10 +237,10 @@ impl<
             rand.split(),
             // We can unwrap here because we made sure that a fuzzer configuration was passed to
             // the function which can't have its corpus directory be None.
-            &config.corpus_directory.as_ref().unwrap(),
+            config.corpus_directory.as_ref().unwrap(),
             // We can unwrap here because we made sure that a fuzzer configuration was passed to
             // the function which can't have its working directory be None.
-            &config.working_directory.as_ref().unwrap(),
+            config.working_directory.as_ref().unwrap(),
             config.load_corpus_at_init,
         )?;
         // Loads the corpus from a user-provided directory
@@ -384,30 +384,28 @@ impl<
             }
             // Iterates over thread handles to see if they timed out or if we need to join
             // terminated threads.
-            let _ = worker_handles.extract_if(|instance, handle| {
+            worker_handles.retain(|instance, handle| {
                 // If there is still an handle associated to this thread...
                 if let Some(join_handle) = handle.join_handle.as_mut() {
                     // ... and the thread has finished running...
                     if join_handle.is_finished() {
-                        match handle.join_handle.take() {
-                            // ... then join the thread.
-                            Some(h) => h
-                                .join()
+                        // ... then join the thread.
+                        if let Some(h) = handle.join_handle.take() {
+                            h.join()
                                 .expect("An error occured while joining threads")
-                                .expect("thread panicked"),
-                            None => {}
-                        };
-                        true
+                                .expect("thread panicked");
+                        }
+                        false
                     } else {
                         // ... otherwise check if it has timed out and stop the Vcpu if that's the
                         // case. The worker will resume execution from a sane point on its own.
                         if time::Instant::now() - handle.latest_ping > self.config.timeout {
                             av::Vcpu::stop(&[*instance]).expect("could not stop Vcpu");
                         }
-                        false
+                        true
                     }
                 } else {
-                    true
+                    false
                 }
             });
             // If no more threads are present in `worker_handles` then break out from the loop and
@@ -1487,7 +1485,7 @@ impl<L: Loader + Loader<LD = LD> + Loader<GD = GD>, LD: Clone, GD: Clone> Execut
                     let insns = cs
                         .disasm_count(&code, addr, 1)
                         .expect("could not disassemble while adding coverage hooks");
-                    if let Some(insn) = insns.as_ref().get(0) {
+                    if let Some(insn) = insns.as_ref().first() {
                         if re.is_match(&format!(
                             "{} {}",
                             insn.mnemonic().unwrap(),

@@ -83,7 +83,7 @@ impl Backtrace {
                     let insns = cs
                         .disasm_count(&code, addr, 1)
                         .expect("could not disassemble while adding backtrace hooks");
-                    if let Some(insn) = insns.as_ref().get(0) {
+                    if let Some(insn) = insns.as_ref().first() {
                         (
                             Self::BT_INSNS.contains(&insn.mnemonic().unwrap()),
                             insn.mnemonic().unwrap() == "ret",

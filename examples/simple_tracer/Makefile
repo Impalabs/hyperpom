@@ -1,9 +1,8 @@
 CODESIGN := codesign
-CARGO := cargo
+CARGO := cargo +nightly
 
 EXECUTOR := simple_tracer
 EXECUTOR_RELEASE := target/release/$(EXECUTOR)
-KEYCHAIN := $(CERT_KEYCHAIN)
 
 .DEFAULT_GOAL := run
 
@@ -11,7 +10,7 @@ build:
 	$(CARGO) fmt
 	$(CARGO) clippy
 	$(CARGO) build --release
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" "$(EXECUTOR_RELEASE)"
+	$(CODESIGN) --sign - --entitlements entitlements.xml --deep --force "$(EXECUTOR_RELEASE)"
 
 run: build
 	$(EXECUTOR_RELEASE)

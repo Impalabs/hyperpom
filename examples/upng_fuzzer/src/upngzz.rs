@@ -75,8 +75,13 @@ pub struct FuzzSubCommand {
     nb_iterations: Option<u64>,
 
     /// Physical address space size available to the fuzzer.
-    #[clap(short = 's', long = "size", value_name = "SIZE", required = true,
-        parse(from_str = from_hex))]
+    #[clap(
+        short = 's',
+        long = "size",
+        value_name = "SIZE",
+        required = true,
+        value_parser=clap_num::maybe_hex::<usize>,
+    )]
     as_size: usize,
 }
 
@@ -103,8 +108,13 @@ pub struct TraceSubCommand {
     trace: PathBuf,
 
     /// Physical address space size available to the fuzzer.
-    #[clap(short = 's', long = "size", value_name = "SIZE", required = true,
-        parse(from_str = from_hex))]
+    #[clap(
+        short = 's',
+        long = "size",
+        value_name = "SIZE",
+        required = true,
+        value_parser=clap_num::maybe_hex::<usize>,
+    )]
     as_size: usize,
 }
 
@@ -183,13 +193,13 @@ pub fn tracer_hook(args: &mut HookArgs<LocalData, GlobalData>) -> hp::error::Res
         .create(true)
         .write(true)
         .append(true)
-        .open(&gd.path.as_ref().unwrap())
+        .open(gd.path.as_ref().unwrap())
         .unwrap();
     CSE.with(|cs| {
         let insns = cs
             .disasm_count(args.insn, args.addr, 1)
             .expect("could not disassemble while adding coverage hooks");
-        let insn = insns.as_ref().get(0).unwrap();
+        let insn = insns.as_ref().first().unwrap();
         writeln!(trace, "{}", insn).expect("could append instructions to the trace");
     });
     Ok(ExitKind::Continue)

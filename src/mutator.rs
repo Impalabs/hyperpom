@@ -178,7 +178,6 @@ impl Mutator {
             }
             // 3/16 chance for a 32-bit operation.
             0xd..0xf => {
-                let val = val as u32;
                 let in_value = u32::from_le_bytes(data[idx..idx + 4].try_into().unwrap());
                 let out_value = match op {
                     0b00 => in_value.wrapping_add(val),

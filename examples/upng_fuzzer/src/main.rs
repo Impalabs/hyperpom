@@ -1,5 +1,3 @@
-#![feature(array_zip)]
-
 use clap::Parser;
 use eyre::Result;
 

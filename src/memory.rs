@@ -680,7 +680,7 @@ impl SlabReference {
             //         reference to the slab, it won't get freed unless all slab objects are also
             //         freed.
             let object = SlabObject {
-                host_addr: unsafe { mem.get_host_addr().add(i * object_size) as *const u8 },
+                host_addr: unsafe { mem.get_host_addr().add(i * object_size) },
                 guest_addr: mem.get_guest_addr().unwrap() + (i * object_size) as u64,
                 object_size,
                 parent: None,
@@ -1009,7 +1009,7 @@ impl PageUpperDirectory {
     /// Creates a new PUD.
     pub fn new(entries: SlabObject) -> Self {
         Self {
-            descriptor: TableDescriptor::new(entries.guest_addr as u64),
+            descriptor: TableDescriptor::new(entries.guest_addr),
             entries,
             objects: HashMap::new(),
         }
@@ -1035,7 +1035,7 @@ impl PageMiddleDirectory {
     /// Creates a new PMD.
     pub fn new(entries: SlabObject) -> Self {
         Self {
-            descriptor: TableDescriptor::new(entries.guest_addr as u64),
+            descriptor: TableDescriptor::new(entries.guest_addr),
             entries,
             objects: HashMap::new(),
         }
@@ -1061,7 +1061,7 @@ impl PageTable {
     /// Creates a new PT.
     pub fn new(entries: SlabObject) -> Self {
         Self {
-            descriptor: TableDescriptor::new(entries.guest_addr as u64),
+            descriptor: TableDescriptor::new(entries.guest_addr),
             entries,
             objects: HashMap::new(),
         }
@@ -1105,7 +1105,7 @@ impl Page {
         privileged: bool,
         parent: Weak<RefCell<PageTable>>,
     ) -> Self {
-        let descriptor = PageDescriptor::new(data.guest_addr as u64, perms, privileged);
+        let descriptor = PageDescriptor::new(data.guest_addr, perms, privileged);
         Self {
             descriptor,
             descriptor_in_use: descriptor.read_only(privileged),
@@ -1782,7 +1782,7 @@ impl Clone for VirtMemAllocator {
                 std::slice::from_raw_parts(page.data.as_ref().unwrap().host_addr, VIRT_PAGE_SIZE)
             };
             // Writes `data` into the newly mapped page.
-            vma.write(addr as u64, data)
+            vma.write(addr, data)
                 .expect("could not copy the memory mapping the new address space");
         }
         // Iterates over each allocated page in the page table for the upper virtual address range.
@@ -1799,7 +1799,7 @@ impl Clone for VirtMemAllocator {
                 std::slice::from_raw_parts(page.data.as_ref().unwrap().host_addr, VIRT_PAGE_SIZE)
             };
             // Writes `data` into the newly mapped page.
-            vma.write(addr as u64, data)
+            vma.write(addr, data)
                 .expect("could not copy the memory mapping the new address space");
         }
         vma
@@ -1891,11 +1891,11 @@ impl VirtMemAllocator {
     pub fn set_trans_table_base_registers(&self, vcpu: &av::Vcpu) -> Result<()> {
         vcpu.set_sys_reg(
             av::SysReg::TTBR1_EL1,
-            self.upper_table.pgd.entries.guest_addr as u64,
+            self.upper_table.pgd.entries.guest_addr,
         )?;
         vcpu.set_sys_reg(
             av::SysReg::TTBR0_EL1,
-            self.lower_table.pgd.entries.guest_addr as u64,
+            self.lower_table.pgd.entries.guest_addr,
         )?;
         Ok(())
     }

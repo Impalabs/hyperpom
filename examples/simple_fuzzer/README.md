@@ -18,7 +18,7 @@ The `Makefile` provided performs multiple operations detailed below.
 To run the program you can simply do:
 
 ```
-CERT_KEYCHAIN=${CERT_NAME} make run
+make run
 ```
 
 If everything went as expected, the program should crash after a minute or two:
