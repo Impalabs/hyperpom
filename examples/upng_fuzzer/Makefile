@@ -3,7 +3,6 @@ CARGO := cargo
 
 FUZZER := upng_fuzzer
 FUZZER_RELEASE := target/release/$(FUZZER)
-KEYCHAIN := $(CERT_KEYCHAIN)
 
 TARGET_DIR := $(PWD)/bin
 TARGET_SRC_DIR := $(TARGET_DIR)/src
@@ -27,7 +26,7 @@ build:
 	$(CARGO) fmt
 	$(CARGO) clippy
 	$(CARGO) build --release
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" "$(FUZZER_RELEASE)"
+	$(CODESIGN) --sign - --entitlements entitlements.xml --deep --force "$(FUZZER_RELEASE)"
 
 run: build
 	mkdir -p $(CORPUS_DIR)

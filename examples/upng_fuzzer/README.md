@@ -21,7 +21,7 @@ NDK_PATH=${NDK_PATH} make build-target
 To run the program you can simply do:
 
 ```
-CERT_KEYCHAIN=${CERT_NAME} make run
+make run
 ```
 
 If everything went as expected, crashes should appear after a few minutes:
@@ -137,7 +137,7 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
 It is also possible to trace the target with the following command:
 
 ```
-CERT_KEYCHAIN=${CERT_NAME} make trace /path/to/testcase
+make trace /path/to/testcase
 ```
 
 The resulting trace file can be found in `tmp/trace.txt`.

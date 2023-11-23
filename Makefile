@@ -9,27 +9,25 @@ TMP_DIR := ./tmp
 CORPUS_DIR := "$(TMP_DIR)/corpus"
 WORK_DIR := "$(TMP_DIR)/work"
 
-KEYCHAIN := $(CERT_KEYCHAIN)
+ENTITLEMENTS := entitlements.xml
 
 build-debug:
 	$(CARGO) fmt
 	$(CARGO) build
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" "$(TARGET_DEBUG)"
 
 build-release:
 	$(CARGO) fmt
 	$(CARGO) build --release
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" "$(TARGET_RELEASE)"
 
 build-test:
 	$(CARGO) test --no-run
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" \
+	$(CODESIGN) --sign - --entitlements "$(ENTITLEMENTS)" --deep --force \
 		$(shell $(CARGO) test --no-run --message-format=json | \
 			jq -r "select(.profile.test == true) | .filenames[]")
 
 build-test-release:
 	$(CARGO) test --no-run --release
-	$(CODESIGN) --entitlements entitlements.xml -f -s "$(KEYCHAIN)" \
+	$(CODESIGN) --sign - --entitlements "$(ENTITLEMENTS)" --deep --force \
 		$(shell $(CARGO) test --no-run --release --message-format=json | \
 			jq -r "select(.profile.test == true) | .filenames[]")
 
@@ -38,7 +36,8 @@ tmp-dirs:
 	mkdir -p $(WORK_DIR)
 
 test: clean-dirs tmp-dirs build-test
-	$(CARGO) test $(filter-out $@,$(MAKECMDGOALS)) -- --nocapture --test-threads=1
+	$(CARGO) test $(filter-out $@,$(MAKECMDGOALS)) -- --nocapture \
+		--test-threads=1
 
 tests: clean-dirs tmp-dirs build-test
 	$(CARGO) test --tests -- --nocapture --test-threads=1
@@ -53,5 +52,5 @@ clean-dirs:
 	rm -rf $(CORPUS_DIR)
 	rm -rf $(WORK_DIR)
 
-clean: clean-dirs clean-target
+clean: clean-dirs
 	$(CARGO) clean
