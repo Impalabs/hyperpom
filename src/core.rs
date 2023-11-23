@@ -384,7 +384,7 @@ impl<
             }
             // Iterates over thread handles to see if they timed out or if we need to join
             // terminated threads.
-            let _ = worker_handles.extract_if(|instance, handle| {
+            worker_handles.retain(|instance, handle| {
                 // If there is still an handle associated to this thread...
                 if let Some(join_handle) = handle.join_handle.as_mut() {
                     // ... and the thread has finished running...
@@ -397,17 +397,17 @@ impl<
                                 .expect("thread panicked"),
                             None => {}
                         };
-                        true
+                        false
                     } else {
                         // ... otherwise check if it has timed out and stop the Vcpu if that's the
                         // case. The worker will resume execution from a sane point on its own.
                         if time::Instant::now() - handle.latest_ping > self.config.timeout {
                             av::Vcpu::stop(&[*instance]).expect("could not stop Vcpu");
                         }
-                        false
+                        true
                     }
                 } else {
-                    true
+                    false
                 }
             });
             // If no more threads are present in `worker_handles` then break out from the loop and

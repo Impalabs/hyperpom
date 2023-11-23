@@ -157,7 +157,6 @@
 
 
 #![feature(exclusive_range_pattern)]
-#![feature(hash_extract_if)]
 #![feature(iterator_try_collect)]
 #![feature(map_try_insert)]
 #![feature(portable_simd)]
