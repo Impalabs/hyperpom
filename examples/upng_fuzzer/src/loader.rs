@@ -58,12 +58,7 @@ impl Elf {
         file.read_to_end(&mut binary)?;
         let elf = match gb::Object::parse(&binary)? {
             gb::Object::Elf(elf) => elf,
-            _ => {
-                return Err(eyre::eyre!(
-                    "Unsupported file type: {}",
-                    path.as_ref().display()
-                ))
-            }
+            _ => return Err(eyre::eyre!("Unsupported file type: {}", path.as_ref().display())),
         };
         // First retrieves the mapped ELF sections from the binary to get the data that will be
         // mapped in the fuzzer.
@@ -169,20 +164,22 @@ impl Section {
         } else {
             section.vm_range()
         };
-        let file_range = if let Some(range) = section.file_range() {
-            if !range.is_empty() && range.len() < 8 {
-                Some(range.start..range.start + 8)
+        let file_range =
+            if let Some(range) = section.file_range() {
+                if !range.is_empty() && range.len() < 8 {
+                    Some(range.start..range.start + 8)
+                } else {
+                    Some(range)
+                }
             } else {
-                Some(range)
-            }
-        } else {
-            None
-        };
-        let sh_size = if section.sh_size > 0 && section.sh_size < 8 {
-            8
-        } else {
-            section.sh_size
-        };
+                None
+            };
+        let sh_size =
+            if section.sh_size > 0 && section.sh_size < 8 {
+                8
+            } else {
+                section.sh_size
+            };
         Ok(Self {
             idx,
             name: Self::get_name(section, elf)?,
@@ -639,18 +636,18 @@ impl Loader for PngLoader {
 
     /// Returns the vector of symbols from this binary.
     fn symbols(&self) -> Result<Symbols> {
-        let symbols = self
-            .elf
-            .symbols
-            .iter()
-            .filter_map(|s| {
-                if s.size == 0 {
-                    return None;
-                }
-                Self::find_symbol_address(&self.elf, &s.name)
-                    .map(|addr| Symbol::new(&s.name, &self.elf.name, addr, s.size))
-            })
-            .collect::<Vec<_>>();
+        let symbols =
+            self.elf
+                .symbols
+                .iter()
+                .filter_map(|s| {
+                    if s.size == 0 {
+                        return None;
+                    }
+                    Self::find_symbol_address(&self.elf, &s.name)
+                        .map(|addr| Symbol::new(&s.name, &self.elf.name, addr, s.size))
+                })
+                .collect::<Vec<_>>();
         Ok(Symbols::from_vec(symbols))
     }
     // fn display_info(&self, _info: &HyperPomInfo) {}

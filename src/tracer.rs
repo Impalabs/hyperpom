@@ -68,7 +68,7 @@ impl Tracer {
             let insns = cs
                 .disasm_count(args.insn, args.addr, 1)
                 .expect("could not disassemble while adding coverage hooks");
-            let insn = insns.as_ref().get(0).unwrap();
+            let insn = insns.as_ref().first().unwrap();
             println!("{}", insn);
         });
         Ok(ExitKind::Continue)

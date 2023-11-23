@@ -1003,10 +1003,7 @@ pub trait Loader: Clone + Send {
         let scaled_max_mutations = max_mutations as f64 / max_size as f64 * data.len() as f64;
         let scaled_max_mutations = std::cmp::max(2, scaled_max_mutations as u64);
         // It's safe to unwrap since 0 < scaled_max_mutations.
-        let nb_mutations = mutator
-            .rand
-            .u64_range(1, scaled_max_mutations as u64)
-            .unwrap();
+        let nb_mutations = mutator.rand.u64_range(1, scaled_max_mutations).unwrap();
         // Randomly mutates the input.
         for _ in 0..nb_mutations {
             let strat_idx = mutator.rand.u64();

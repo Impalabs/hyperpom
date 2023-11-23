@@ -51,7 +51,7 @@ impl SimpleLoader {
     /// more likely you'll have to parse executable formats such as Mach-O or ELF.
     fn new() -> Result<Self> {
         // Reads the binary.
-        let mut file = File::open(&Self::BINARY_PATH)?;
+        let mut file = File::open(Self::BINARY_PATH)?;
         let mut binary = Vec::new();
         file.read_to_end(&mut binary)?;
         Ok(Self {

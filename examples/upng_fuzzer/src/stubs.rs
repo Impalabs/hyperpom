@@ -86,24 +86,25 @@ impl Stub {
     pub fn realloc(args: &mut HookArgs<LocalData, GlobalData>) -> Result<ExitKind> {
         let old_mem = args.vcpu.get_reg(av::Reg::X0)?;
         let new_size = args.vcpu.get_reg(av::Reg::X1)?;
-        let new_addr = if let Some(old_size) = args.ldata.allocs.get(&old_mem) {
-            let mut data = vec![];
-            data.resize(*old_size, 0u8);
-            args.vma.read(old_mem, &mut data)?;
-            if let Some(addr) = Self::allocate(args.ldata, args.vcpu, args.vma, new_size as usize)?
+        let new_addr =
+            if let Some(old_size) = args.ldata.allocs.get(&old_mem) {
+                let mut data = vec![0u8; *old_size];
+                args.vma.read(old_mem, &mut data)?;
+                if let Some(addr) =
+                    Self::allocate(args.ldata, args.vcpu, args.vma, new_size as usize)?
+                {
+                    args.vma.write(addr, &data)?;
+                    addr
+                } else {
+                    0
+                }
+            } else if let Some(addr) =
+                Self::allocate(args.ldata, args.vcpu, args.vma, new_size as usize)?
             {
-                args.vma.write(addr, &data)?;
                 addr
             } else {
                 0
-            }
-        } else if let Some(addr) =
-            Self::allocate(args.ldata, args.vcpu, args.vma, new_size as usize)?
-        {
-            addr
-        } else {
-            0
-        };
+            };
         Self::retval(args.vcpu, new_addr)
     }
 }

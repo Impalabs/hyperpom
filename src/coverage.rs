@@ -245,7 +245,7 @@ impl GlobalCoverage {
                     let insns = cs
                         .disasm_count(&code, addr, 1)
                         .expect("could not disassemble while adding coverage hooks");
-                    if let Some(insn) = insns.as_ref().get(0) {
+                    if let Some(insn) = insns.as_ref().first() {
                         (
                             Self::B_INSNS.contains(&insn.mnemonic().unwrap()),
                             Self::CMP_INSNS.contains(&insn.mnemonic().unwrap()),
@@ -456,8 +456,8 @@ impl Comparisons {
         }
         if sf {
             Ok(match shift_type {
-                0b00 => ComparisonResult::U64(rn_val, (rm_val as u64) << shift_amount),
-                0b01 => ComparisonResult::U64(rn_val, (rm_val as u64) >> shift_amount),
+                0b00 => ComparisonResult::U64(rn_val, rm_val << shift_amount),
+                0b01 => ComparisonResult::U64(rn_val, rm_val >> shift_amount),
                 0b10 => ComparisonResult::U64(rn_val, ((rm_val as i64) >> shift_amount) as u64),
                 _ => return Ok(ComparisonResult::Other),
             })

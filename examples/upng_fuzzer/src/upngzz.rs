@@ -193,13 +193,13 @@ pub fn tracer_hook(args: &mut HookArgs<LocalData, GlobalData>) -> hp::error::Res
         .create(true)
         .write(true)
         .append(true)
-        .open(&gd.path.as_ref().unwrap())
+        .open(gd.path.as_ref().unwrap())
         .unwrap();
     CSE.with(|cs| {
         let insns = cs
             .disasm_count(args.insn, args.addr, 1)
             .expect("could not disassemble while adding coverage hooks");
-        let insn = insns.as_ref().get(0).unwrap();
+        let insn = insns.as_ref().first().unwrap();
         writeln!(trace, "{}", insn).expect("could append instructions to the trace");
     });
     Ok(ExitKind::Continue)
